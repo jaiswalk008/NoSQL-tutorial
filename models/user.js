@@ -48,5 +48,30 @@ class User{
     })
     .catch(err => console.log(err));
   } 
+  getCart(){
+    const db = getDb();
+    const productIds= this.cart.items.map(item => item.productId)
+    // console.log(productIds);
+    return db.collection('products').find({_id: {$in: productIds}}).toArray()
+    .then(products =>{
+      return products.map(p =>{
+        // console.log(p);
+        return {...p, quantity: this.cart.items.find( i =>{
+          return i.productId.toString() ==p._id.toString();
+        }).quantity}
+      })
+    })
+  }
+  deleteItemFromCart(productId){
+    const updatedCartItems= this.cart.items.filter(item =>{
+      return item.productId.toString() !== productId.toString();
+    });
+    const db = getDb();
+    return db.collection('users').updateOne({
+      _id: new mongodb.ObjectId(this._id)
+    }, {$set:{cart:{items: updatedCartItems}}})
+    .then((res) => console.log('cart updated'))
+    .catch(err => console.log(err));
+  }
 }
 module.exports = User;
