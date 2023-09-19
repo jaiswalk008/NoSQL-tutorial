@@ -11,7 +11,7 @@ const mongoConnect = callback => {
       console.log('Connected!');
       _db = client.db();//storing access to database
       callback(client);
-      console.log(_db);
+      // console.log(_db);
     })
     .catch(err => {
       console.log(err);
