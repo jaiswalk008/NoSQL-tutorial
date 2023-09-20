@@ -1,6 +1,4 @@
 const mongodb = require('mongodb');
-const { get } = require('../routes/admin');
-
 const getDb = require('../util/database').getDb;
 
 class User{
@@ -50,8 +48,8 @@ class User{
           email:this.email
         }
       }
-      console.log('order created')
-      console.log(order);
+      // console.log('order created')
+      // console.log(order);
       return db.collection('orders').insertOne(order)
     })
     .then(result =>{
