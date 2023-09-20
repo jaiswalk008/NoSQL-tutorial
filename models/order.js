@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const order = new Schema({
   products:[{
-    productData:{ type: Object , require:true},
+    productData:{ type: Object , required:true},
     quantity:{type:Number , required:true}
   }],
   user:{

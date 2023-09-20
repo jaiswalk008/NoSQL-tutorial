@@ -87,9 +87,11 @@ exports.postOrder = (req, res, next) => {
   req.user.populate('cart.items.productId')
   .then(user =>{
     const products = user.cart.items.map(i =>{
-      console.log(i);
-      return {quantity:i.quantity , product: {...i.productId._doc}}//productId has lot of metadata
+      // console.log(i.productId._doc);
+      return {quantity:i.quantity , productData: {...i.productId._doc}}//productId has lot of metadata
     });
+    // console.log('--------orders ----------------')
+    // console.log(products);
     const order = new Order({
       user:{
         name:req.user.name,
@@ -101,6 +103,10 @@ exports.postOrder = (req, res, next) => {
 
   })
   .then(result => {
+    return req.user.clearCart();
+   
+  })
+  .then(() => {
     res.redirect('/orders');
   })
   .catch(err => console.log(err));
@@ -108,8 +114,7 @@ exports.postOrder = (req, res, next) => {
 };
 
 exports.getOrders = (req, res, next) => {
-  req.user
-    .getOrders()
+  Order.find({'user.userId':req.user._id})
     .then(orders => {
       res.render('shop/orders', {
         path: '/orders',
