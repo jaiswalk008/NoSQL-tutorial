@@ -14,7 +14,8 @@ exports.postAddProduct = (req, res, next) => {
   const price = req.body.price;
   const description = req.body.description;
   const product = new Product({
-    title: title,price: price,description:description,imageUrl:imageUrl
+    title: title,price: price,description:description,imageUrl:imageUrl,
+    userId: req.user // mongoose will automatically pick userId from req.user object
   });
   product.save()//now the save method comes from mongoose and it gives a then method though not a promise
     .then(result => {
@@ -63,6 +64,7 @@ exports.postEditProduct = (req, res, next) => {
     product.price = updatedPrice;
     product.description = updatedDesc;
     product.imageUrl = updatedImageUrl;
+     
     return product.save()
   })
   
@@ -74,8 +76,17 @@ exports.postEditProduct = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
+  /*
+    Product.find()
+    .select('title price - _id')// select title,price and exclude _id
+    .populate('userId' , 'name')
+  */
   Product.find()
+  // .select('title price')
+  .populate('userId')// populate inserts all the data related to userid 
+  
     .then(products => {
+      console.log(products);
       res.render('admin/products', {
         prods: products,
         pageTitle: 'Admin Products',
